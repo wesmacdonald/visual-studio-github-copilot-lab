@@ -7,14 +7,38 @@
     <base href="/" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="site-theme.css" />
     <link rel="stylesheet" href="Store.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <script>
+        (function () {
+            var theme = localStorage.getItem('tinyshop-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <HeadOutlet />
 </head>
 
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        window.updateThemeIcon = function (theme) {
+            document.querySelectorAll('.theme-icon').forEach(function (el) {
+                el.textContent = theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+            });
+        };
+
+        window.toggleTheme = function () {
+            var current = document.documentElement.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('tinyshop-theme', next);
+            updateThemeIcon(next);
+        };
+
+        updateThemeIcon(localStorage.getItem('tinyshop-theme') || 'light');
+    </script>
 </body>
 
 </html>
