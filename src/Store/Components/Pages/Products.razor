@@ -31,7 +31,7 @@ else
         <div class="products-grid">
             @foreach (var product in products)
             {
-                <article class="product-card">
+                <a class="product-card" href="@($"/products/{product.Id}")">
                     <div class="product-image-wrap">
                         <img class="product-image"
                              src="@($"{imagePrefix}{product.ImageUrl}")"
@@ -41,7 +41,7 @@ else
                         <h2 class="product-name">@product.Name</h2>
                         <span class="product-price">@product.Price.ToString("C")</span>
                     </div>
-                </article>
+                </a>
             }
         </div>
     }

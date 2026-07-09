@@ -1,0 +1,67 @@
+@page "/products/{id:int}"
+@using DataEntities
+@using Store.Services
+@inject IConfiguration Configuration
+@inject ProductService ProductService
+@rendermode InteractiveServer
+@attribute [StreamRendering(true)]
+
+<PageTitle>Product Details</PageTitle>
+
+<div class="product-detail-page">
+    @if (isLoading)
+    {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (product is null)
+    {
+        <div class="empty-state">
+            <h1>Product not found</h1>
+            <p>We couldn't find a product with that ID.</p>
+            <a class="btn btn-outline-primary" href="/products">Back to products</a>
+        </div>
+    }
+    else
+    {
+        <div class="product-detail-card">
+            <div class="product-detail-image-wrap">
+                <img class="product-detail-image"
+                     src="@GetImageUrl(product.ImageUrl)"
+                     alt="@product.Name" />
+            </div>
+            <div class="product-detail-content">
+                <h1 class="product-detail-name">@product.Name</h1>
+                <p class="product-detail-price">@product.Price.ToString("C")</p>
+                <p class="product-detail-description">@(string.IsNullOrWhiteSpace(product.Description) ? "No description available." : product.Description)</p>
+                <a class="btn btn-primary" href="/products">Back to products</a>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Product? product;
+    private bool isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        product = null;
+
+        product = await ProductService.GetProductById(Id);
+        isLoading = false;
+    }
+
+    private string GetImageUrl(string? imageUrl)
+    {
+        var imagePrefix = Configuration["ImagePrefix"] ?? string.Empty;
+        return string.IsNullOrWhiteSpace(imageUrl) ? string.Empty : $"{imagePrefix}{imageUrl}";
+    }
+}
